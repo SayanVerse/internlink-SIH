@@ -1,0 +1,207 @@
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { ThemeToggle } from "@/components/ThemeToggle";
+import { ArrowLeft, Eye, EyeOff, Shield } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
+
+const ADMIN_EMAIL = "admin@pminternship.in";
+const ADMIN_PASSWORD = "Admin@12345";
+
+const AdminLogin = () => {
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleAdminLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      // Verify credentials match admin
+      if (email !== ADMIN_EMAIL || password !== ADMIN_PASSWORD) {
+        throw new Error("Invalid admin credentials");
+      }
+
+      // Try to sign in with Supabase
+      const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
+        email: ADMIN_EMAIL,
+        password: ADMIN_PASSWORD,
+      });
+
+      // If user doesn't exist, create the admin account
+      if (signInError && signInError.message.includes("Invalid login credentials")) {
+        const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+          email: ADMIN_EMAIL,
+          password: ADMIN_PASSWORD,
+          options: {
+            data: {
+              full_name: "System Administrator",
+              date_of_birth: "1990-01-01",
+              college_name: "PM Internship Scheme",
+              degree: "Administration",
+              branch: "System",
+            },
+            emailRedirectTo: `${window.location.origin}/admin`,
+          },
+        });
+
+        if (signUpError) throw signUpError;
+
+        // Assign admin role
+        if (signUpData.user) {
+          const { error: roleError } = await supabase
+            .from("user_roles")
+            .insert({
+              user_id: signUpData.user.id,
+              role: "admin",
+            });
+
+          if (roleError && !roleError.message.includes("duplicate")) {
+            throw roleError;
+          }
+        }
+
+        // Sign in again after creating account
+        const { error: finalSignInError } = await supabase.auth.signInWithPassword({
+          email: ADMIN_EMAIL,
+          password: ADMIN_PASSWORD,
+        });
+
+        if (finalSignInError) throw finalSignInError;
+      } else if (signInError) {
+        throw signInError;
+      }
+
+      // Verify admin role
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { data: roleData } = await supabase
+          .from("user_roles")
+          .select("role")
+          .eq("user_id", user.id)
+          .single();
+
+        if (roleData?.role !== "admin") {
+          throw new Error("Access denied. Admin privileges required.");
+        }
+      }
+
+      toast({
+        title: "Welcome, Administrator",
+        description: "Successfully logged in to admin panel.",
+      });
+
+      navigate("/admin");
+    } catch (error: any) {
+      toast({
+        title: "Login failed",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-background via-background to-card">
+      {/* Theme Toggle */}
+      <div className="fixed top-6 right-6 z-50">
+        <ThemeToggle />
+      </div>
+
+      {/* Back Button */}
+      <div className="absolute top-6 left-6">
+        <Button variant="outline" onClick={() => navigate("/")}>
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          Back to Home
+        </Button>
+      </div>
+
+      {/* Admin Login Form */}
+      <div className="flex min-h-screen items-center justify-center px-4">
+        <Card className="w-full max-w-md bg-card/80 backdrop-blur border-primary/20">
+          <CardHeader className="text-center">
+            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
+              <Shield className="h-8 w-8 text-primary" />
+            </div>
+            <CardTitle className="text-3xl">Admin Access</CardTitle>
+            <CardDescription>
+              Secure login for system administrators only
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleAdminLogin} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="email">Admin Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="admin@pminternship.in"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  autoComplete="username"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="password">Admin Password</Label>
+                <div className="relative">
+                  <Input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Enter admin password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    autoComplete="current-password"
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="absolute right-2 top-1/2 -translate-y-1/2"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? (
+                      <EyeOff className="h-4 w-4" />
+                    ) : (
+                      <Eye className="h-4 w-4" />
+                    )}
+                  </Button>
+                </div>
+              </div>
+
+              <Button
+                type="submit"
+                className="w-full bg-gradient-primary hover:bg-gradient-primary-hover"
+                disabled={loading}
+              >
+                <Shield className="mr-2 h-4 w-4" />
+                {loading ? "Verifying..." : "Access Admin Panel"}
+              </Button>
+            </form>
+
+            <div className="mt-6 rounded-lg bg-muted/50 p-4">
+              <p className="text-xs text-muted-foreground text-center">
+                ⚠️ This area is restricted to authorized administrators only.
+                Unauthorized access attempts are logged and monitored.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+};
+
+export default AdminLogin;

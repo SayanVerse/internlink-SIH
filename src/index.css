@@ -44,37 +44,38 @@ All colors MUST be HSL.
   }
 
   .dark {
-    --background: 222 47% 5%;
-    --foreground: 210 40% 98%;
+    --background: 0 0% 0%;
+    --foreground: 0 0% 98%;
 
-    --card: 222 39% 11%;
-    --card-foreground: 210 40% 98%;
+    --card: 220 15% 8%;
+    --card-foreground: 0 0% 98%;
 
-    --popover: 222 39% 11%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 220 15% 8%;
+    --popover-foreground: 0 0% 98%;
 
     --primary: 262 83% 58%;
-    --primary-foreground: 210 40% 98%;
+    --primary-foreground: 0 0% 98%;
 
-    --secondary: 217 33% 18%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 220 10% 15%;
+    --secondary-foreground: 0 0% 98%;
 
-    --muted: 217 33% 18%;
-    --muted-foreground: 215 20% 65%;
+    --muted: 220 10% 15%;
+    --muted-foreground: 0 0% 65%;
 
-    --accent: 217 33% 18%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 220 10% 15%;
+    --accent-foreground: 0 0% 98%;
 
     --destructive: 0 63% 31%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive-foreground: 0 0% 98%;
 
-    --border: 217 33% 18%;
-    --input: 217 33% 18%;
+    --border: 220 10% 15%;
+    --input: 220 10% 15%;
     --ring: 262 83% 58%;
 
-    /* Custom gradient for CTA buttons - dark mode */
+    /* Custom gradients for pitch black theme */
     --gradient-primary: linear-gradient(135deg, hsl(35 100% 65%), hsl(330 100% 70%));
     --gradient-primary-hover: linear-gradient(135deg, hsl(35 100% 60%), hsl(330 100% 65%));
+    --gradient-dark-subtle: linear-gradient(180deg, hsl(220 15% 8%), hsl(0 0% 0%));
   }
 }
 
