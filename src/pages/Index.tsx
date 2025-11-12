@@ -16,9 +16,9 @@ const Index = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-card/50">
       {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between p-6">
+      <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between p-6 bg-background/80 backdrop-blur-sm border-b border-border/50">
         <div className="flex items-center gap-4">
           <LanguageSwitcher />
         </div>
@@ -29,7 +29,7 @@ const Index = () => {
             onClick={() => navigate("/auth")}
             className="font-semibold"
           >
-            Login
+            Student Login
           </Button>
         </div>
       </header>

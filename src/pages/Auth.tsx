@@ -62,7 +62,7 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-to-b from-background via-background to-card">
       {/* Theme Toggle */}
       <div className="fixed top-6 right-6 z-50">
         <ThemeToggle />
@@ -148,14 +148,17 @@ const Auth = () => {
                   </Button>
                 </form>
 
-                {/* Admin Demo Credentials */}
-                <Card className="mt-6 bg-muted/50">
-                  <CardContent className="pt-6 space-y-1 text-sm">
-                    <p className="font-semibold">Admin Demo:</p>
-                    <p>Email: admin@pminternship.in</p>
-                    <p>Password: Admin@12345</p>
-                  </CardContent>
-                </Card>
+                {/* Link to Admin Login */}
+                <div className="mt-6 text-center">
+                  <p className="text-sm text-muted-foreground mb-2">Are you an administrator?</p>
+                  <Button
+                    variant="link"
+                    onClick={() => navigate("/admin-login")}
+                    className="text-primary"
+                  >
+                    Access Admin Panel →
+                  </Button>
+                </div>
               </TabsContent>
 
               <TabsContent value="signup">
