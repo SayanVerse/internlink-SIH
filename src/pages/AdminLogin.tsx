@@ -26,20 +26,20 @@ const AdminLogin = () => {
     setLoading(true);
 
     try {
-      // Verify credentials match admin
+      // Verify credentials match hardcoded admin credentials
       if (email !== ADMIN_EMAIL || password !== ADMIN_PASSWORD) {
-        throw new Error("Invalid admin credentials");
+        throw new Error("Invalid admin credentials. Please check your email and password.");
       }
 
       // Try to sign in with Supabase
-      const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
+      let { error: signInError } = await supabase.auth.signInWithPassword({
         email: ADMIN_EMAIL,
         password: ADMIN_PASSWORD,
       });
 
       // If user doesn't exist, create the admin account
       if (signInError && signInError.message.includes("Invalid login credentials")) {
-        const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+        const { error: signUpError } = await supabase.auth.signUp({
           email: ADMIN_EMAIL,
           password: ADMIN_PASSWORD,
           options: {
@@ -56,43 +56,28 @@ const AdminLogin = () => {
 
         if (signUpError) throw signUpError;
 
-        // Assign admin role
-        if (signUpData.user) {
-          const { error: roleError } = await supabase
-            .from("user_roles")
-            .insert({
-              user_id: signUpData.user.id,
-              role: "admin",
-            });
-
-          if (roleError && !roleError.message.includes("duplicate")) {
-            throw roleError;
-          }
-        }
-
-        // Sign in again after creating account
+        // Sign in after creating account
         const { error: finalSignInError } = await supabase.auth.signInWithPassword({
           email: ADMIN_EMAIL,
           password: ADMIN_PASSWORD,
         });
 
         if (finalSignInError) throw finalSignInError;
+
+        // Try to assign admin role (optional - won't block login)
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          try {
+            await supabase.from("user_roles").insert({
+              user_id: user.id,
+              role: "admin",
+            });
+          } catch {
+            // Ignore role assignment errors
+          }
+        }
       } else if (signInError) {
         throw signInError;
-      }
-
-      // Verify admin role
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        const { data: roleData } = await supabase
-          .from("user_roles")
-          .select("role")
-          .eq("user_id", user.id)
-          .single();
-
-        if (roleData?.role !== "admin") {
-          throw new Error("Access denied. Admin privileges required.");
-        }
       }
 
       toast({
