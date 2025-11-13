@@ -10,6 +10,7 @@ import Dashboard from "./pages/Dashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminLogin from "./pages/AdminLogin";
 import NotFound from "./pages/NotFound";
+import { Chatbot } from "@/components/Chatbot";
 
 const queryClient = new QueryClient();
 

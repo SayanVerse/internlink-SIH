@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { Chatbot } from "@/components/Chatbot";
 import { ArrowLeft, Eye, EyeOff, LogIn } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -168,6 +169,9 @@ const Auth = () => {
           </CardContent>
         </Card>
       </div>
+
+      {/* Chatbot */}
+      <Chatbot />
     </div>
   );
 };

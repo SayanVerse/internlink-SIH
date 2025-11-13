@@ -82,9 +82,11 @@ All colors MUST be HSL.
 @layer base {
   * {
     @apply border-border;
+    font-family: 'Baloo Bhai 2', cursive;
   }
 
   body {
     @apply bg-background text-foreground;
+    font-family: 'Baloo Bhai 2', cursive;
   }
 }

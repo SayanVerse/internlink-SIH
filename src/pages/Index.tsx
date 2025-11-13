@@ -3,7 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
-import { ArrowRight, Briefcase, Users, Building2, TrendingUp } from "lucide-react";
+import { Chatbot } from "@/components/Chatbot";
+import { ArrowRight, Briefcase, Users, Building2, TrendingUp, Target, Zap, Shield } from "lucide-react";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -74,6 +75,83 @@ const Index = () => {
           })}
         </div>
       </section>
+
+      {/* About Section */}
+      <section className="px-4 py-20 bg-card/30">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl md:text-5xl font-bold mb-4">About InternLink</h2>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              Empowering students through AI-powered internship recommendations under the PM Internship Scheme
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+            <Card className="p-6 text-center border-border/50 bg-card/50 backdrop-blur">
+              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
+                <Target className="h-8 w-8 text-primary" />
+              </div>
+              <h3 className="text-xl font-semibold mb-2">Personalized Matching</h3>
+              <p className="text-muted-foreground">
+                Our AI algorithm analyzes your skills, education, and preferences to find the perfect internship matches for you.
+              </p>
+            </Card>
+
+            <Card className="p-6 text-center border-border/50 bg-card/50 backdrop-blur">
+              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
+                <Zap className="h-8 w-8 text-primary" />
+              </div>
+              <h3 className="text-xl font-semibold mb-2">Instant Results</h3>
+              <p className="text-muted-foreground">
+                Get 3-5 tailored internship recommendations within seconds. No more endless searching through job boards.
+              </p>
+            </Card>
+
+            <Card className="p-6 text-center border-border/50 bg-card/50 backdrop-blur">
+              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
+                <Shield className="h-8 w-8 text-primary" />
+              </div>
+              <h3 className="text-xl font-semibold mb-2">Verified Opportunities</h3>
+              <p className="text-muted-foreground">
+                All internships are verified and part of the official PM Internship Scheme, ensuring quality and authenticity.
+              </p>
+            </Card>
+          </div>
+
+          <div className="bg-gradient-to-r from-primary/10 via-primary/5 to-primary/10 rounded-2xl p-8 md:p-12">
+            <h3 className="text-2xl md:text-3xl font-bold mb-4">How InternLink Helps You</h3>
+            <div className="space-y-4 text-lg text-muted-foreground">
+              <p>
+                <strong className="text-foreground">🎯 Smart Recommendations:</strong> Our platform uses advanced AI to match your unique profile with the most suitable internship opportunities.
+              </p>
+              <p>
+                <strong className="text-foreground">📚 Comprehensive Database:</strong> Access hundreds of internships across various sectors including IT, Healthcare, Finance, Education, and more.
+              </p>
+              <p>
+                <strong className="text-foreground">🚀 Career Growth:</strong> Gain valuable real-world experience and build your professional network through quality internships.
+              </p>
+              <p>
+                <strong className="text-foreground">🤝 Government Backed:</strong> Part of the official PM Internship Scheme, providing authentic and verified opportunities for students.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="px-4 py-8 border-t border-border/50 bg-card/20">
+        <div className="max-w-6xl mx-auto text-center">
+          <p className="text-sm text-muted-foreground">
+            Developed by <span className="font-semibold text-foreground">Team Tech Bridge</span>
+          </p>
+          <p className="text-sm text-muted-foreground mt-1">
+            Smart India Hackathon 2025
+          </p>
+        </div>
+      </footer>
+
+      {/* Chatbot */}
+      <Chatbot />
     </div>
   );
 };
