@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -22,6 +22,7 @@ interface Profile {
 const Dashboard = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [showInternshipForm, setShowInternshipForm] = useState(false);
@@ -29,6 +30,15 @@ const Dashboard = () => {
   useEffect(() => {
     checkAuth();
   }, []);
+
+  useEffect(() => {
+    // Check if we should auto-open the internship form
+    if (searchParams.get("start") === "internship" && !loading) {
+      setShowInternshipForm(true);
+      // Clear the query param
+      setSearchParams({});
+    }
+  }, [searchParams, loading]);
 
   const checkAuth = async () => {
     const { data: { session } } = await supabase.auth.getSession();

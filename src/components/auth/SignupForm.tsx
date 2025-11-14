@@ -52,18 +52,55 @@ export function SignupForm() {
     email: "",
     password: "",
     college: "",
+    customCollege: "",
     degree: "",
+    customDegree: "",
     branch: "",
+    customBranch: "",
+    dobDay: "",
+    dobMonth: "",
+    dobYear: "",
   });
 
   const selectedDegreeData = degrees.find((d) => d.value === selectedDegree);
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!date) {
+    
+    // Check if date is selected or manual entry is provided
+    let finalDate: Date | undefined = date;
+    
+    if (!date && (formData.dobDay || formData.dobMonth || formData.dobYear)) {
+      // Use manual entry
+      if (!formData.dobDay || !formData.dobMonth || !formData.dobYear) {
+        toast({
+          title: "Complete date of birth required",
+          description: "Please enter day, month, and year",
+          variant: "destructive",
+        });
+        return;
+      }
+      
+      const year = parseInt(formData.dobYear);
+      const month = parseInt(formData.dobMonth) - 1; // JS months are 0-indexed
+      const day = parseInt(formData.dobDay);
+      
+      if (year < 1900 || year > new Date().getFullYear() || month < 0 || month > 11 || day < 1 || day > 31) {
+        toast({
+          title: "Invalid date",
+          description: "Please enter a valid date of birth",
+          variant: "destructive",
+        });
+        return;
+      }
+      
+      finalDate = new Date(year, month, day);
+    }
+    
+    if (!finalDate) {
       toast({
         title: "Date of birth required",
-        description: "Please select your date of birth",
+        description: "Please select or enter your date of birth",
         variant: "destructive",
       });
       return;
@@ -72,16 +109,20 @@ export function SignupForm() {
     setLoading(true);
 
     try {
+      const collegeName = formData.college === "Other" || !formData.college ? formData.customCollege : formData.college;
+      const degreeName = formData.degree === "Other" || !formData.degree ? formData.customDegree : formData.degree;
+      const branchName = formData.branch === "Other" || !formData.branch ? formData.customBranch : formData.branch;
+
       const { data, error } = await supabase.auth.signUp({
         email: formData.email,
         password: formData.password,
         options: {
           data: {
             full_name: formData.fullName,
-            date_of_birth: format(date, "yyyy-MM-dd"),
-            college_name: formData.college,
-            degree: formData.degree,
-            branch: formData.branch,
+            date_of_birth: format(finalDate, "yyyy-MM-dd"),
+            college_name: collegeName,
+            degree: degreeName,
+            branch: branchName,
           },
           emailRedirectTo: `${window.location.origin}/`,
         },
@@ -183,6 +224,47 @@ export function SignupForm() {
             />
           </PopoverContent>
         </Popover>
+        
+        <div className="text-center text-sm text-muted-foreground my-2">or enter manually</div>
+        
+        <div className="grid grid-cols-3 gap-2">
+          <div>
+            <Label htmlFor="dobDay" className="text-xs">Day</Label>
+            <Input
+              id="dobDay"
+              type="number"
+              min="1"
+              max="31"
+              placeholder="DD"
+              value={formData.dobDay}
+              onChange={(e) => setFormData({ ...formData, dobDay: e.target.value })}
+            />
+          </div>
+          <div>
+            <Label htmlFor="dobMonth" className="text-xs">Month</Label>
+            <Input
+              id="dobMonth"
+              type="number"
+              min="1"
+              max="12"
+              placeholder="MM"
+              value={formData.dobMonth}
+              onChange={(e) => setFormData({ ...formData, dobMonth: e.target.value })}
+            />
+          </div>
+          <div>
+            <Label htmlFor="dobYear" className="text-xs">Year</Label>
+            <Input
+              id="dobYear"
+              type="number"
+              min="1900"
+              max={new Date().getFullYear()}
+              placeholder="YYYY"
+              value={formData.dobYear}
+              onChange={(e) => setFormData({ ...formData, dobYear: e.target.value })}
+            />
+          </div>
+        </div>
       </div>
 
       <div className="space-y-2">
@@ -199,6 +281,14 @@ export function SignupForm() {
             ))}
           </SelectContent>
         </Select>
+        
+        {(formData.college === "Other" || !formData.college) && (
+          <Input
+            placeholder="Enter your college name"
+            value={formData.customCollege}
+            onChange={(e) => setFormData({ ...formData, customCollege: e.target.value })}
+          />
+        )}
       </div>
 
       <div className="space-y-2">
@@ -219,8 +309,17 @@ export function SignupForm() {
                 {degree.label}
               </SelectItem>
             ))}
+            <SelectItem value="Other">Other</SelectItem>
           </SelectContent>
         </Select>
+        
+        {(selectedDegree === "Other" || !selectedDegree) && (
+          <Input
+            placeholder="Enter your degree"
+            value={formData.customDegree}
+            onChange={(e) => setFormData({ ...formData, customDegree: e.target.value })}
+          />
+        )}
       </div>
 
       {selectedDegreeData && (
@@ -236,8 +335,28 @@ export function SignupForm() {
                   {branch}
                 </SelectItem>
               ))}
+              <SelectItem value="Other">Other</SelectItem>
             </SelectContent>
           </Select>
+          
+          {formData.branch === "Other" && (
+            <Input
+              placeholder="Enter your branch"
+              value={formData.customBranch}
+              onChange={(e) => setFormData({ ...formData, customBranch: e.target.value })}
+            />
+          )}
+        </div>
+      )}
+      
+      {selectedDegree === "Other" && (
+        <div className="space-y-2">
+          <Label htmlFor="customBranch">Branch/Specialization</Label>
+          <Input
+            placeholder="Enter your branch"
+            value={formData.customBranch}
+            onChange={(e) => setFormData({ ...formData, customBranch: e.target.value })}
+          />
         </div>
       )}
 

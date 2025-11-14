@@ -4,7 +4,8 @@ import { Card } from "@/components/ui/card";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { Chatbot } from "@/components/Chatbot";
-import { ArrowRight, Briefcase, Users, Building2, TrendingUp, Target, Zap, Shield } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { ArrowRight, Briefcase, Users, Building2, TrendingUp, Target, Zap, Shield, User } from "lucide-react";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -18,10 +19,29 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-card/50">
+      {/* Language Switcher - Bottom Left */}
+      <div className="fixed bottom-6 left-6 z-50">
+        <LanguageSwitcher />
+      </div>
+
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between p-6 bg-background/80 backdrop-blur-sm border-b border-border/50">
         <div className="flex items-center gap-4">
-          <LanguageSwitcher />
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={async () => {
+              const { data: { session } } = await supabase.auth.getSession();
+              if (session) {
+                navigate("/dashboard");
+              } else {
+                navigate("/auth");
+              }
+            }}
+            className="rounded-full"
+          >
+            <User className="h-5 w-5" />
+          </Button>
         </div>
         <div className="flex items-center gap-4">
           <ThemeToggle />
@@ -50,7 +70,14 @@ const Index = () => {
         <Button
           size="lg"
           className="bg-gradient-primary hover:bg-gradient-primary-hover text-primary-foreground font-semibold text-lg px-8 py-6 rounded-xl"
-          onClick={() => navigate("/auth")}
+          onClick={async () => {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (session) {
+              navigate("/dashboard?start=internship");
+            } else {
+              navigate("/auth");
+            }
+          }}
         >
           Find my internship
           <ArrowRight className="ml-2 h-5 w-5" />
