@@ -12,10 +12,13 @@ export default {
         "2xl": "1400px",
       },
     },
-      extend: {
-        fontFamily: {
-          'baloo': ['"Baloo Bhai 2"', 'cursive'],
-        },
+    extend: {
+      screens: {
+        'xs': '475px',
+      },
+      fontFamily: {
+        'baloo': ['"Baloo Bhai 2"', 'cursive'],
+      },
         colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
