@@ -76,41 +76,43 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-card/50">
       {/* Header */}
-      <header className="sticky top-0 z-40 flex items-center justify-between p-4 md:p-6 bg-background/80 backdrop-blur-sm border-b border-border/50">
-        <div className="flex items-center gap-4">
-          <Button variant="ghost" onClick={() => navigate("/")} size="sm">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Home
+      <header className="sticky top-0 z-40 flex items-center justify-between p-3 sm:p-4 md:p-6 bg-background/80 backdrop-blur-sm border-b border-border/50">
+        <div className="flex items-center gap-2 sm:gap-4">
+          <Button variant="ghost" onClick={() => navigate("/")} size="sm" className="px-2 sm:px-3">
+            <ArrowLeft className="mr-1 sm:mr-2 h-4 w-4" />
+            <span className="text-xs sm:text-sm">Home</span>
           </Button>
-          <h1 className="text-xl md:text-2xl font-bold hidden sm:block">InternLink Dashboard</h1>
+          <h1 className="text-base sm:text-xl md:text-2xl font-bold hidden xs:block">InternLink Dashboard</h1>
         </div>
-        <div className="flex items-center gap-2 md:gap-4">
-          <LanguageSwitcher />
+        <div className="flex items-center gap-1 sm:gap-2 md:gap-4">
+          <div className="hidden sm:block">
+            <LanguageSwitcher />
+          </div>
           <ThemeToggle />
-          <Button variant="outline" onClick={handleLogout} size="sm">
-            <LogOut className="mr-2 h-4 w-4" />
-            <span className="hidden sm:inline">Logout</span>
+          <Button variant="outline" onClick={handleLogout} size="sm" className="px-2 sm:px-3">
+            <LogOut className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4" />
+            <span className="text-xs sm:text-sm hidden xs:inline">Logout</span>
           </Button>
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-8 max-w-6xl">
+      <main className="container mx-auto px-3 sm:px-4 md:px-6 py-6 sm:py-8 max-w-6xl">
         {!showInternshipForm ? (
           <>
-            <div className="mb-8 text-center">
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">
+            <div className="mb-6 sm:mb-8 text-center">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4 px-2">
                 Welcome, {profile?.full_name || "Student"}!
               </h2>
-              <p className="text-muted-foreground mb-6">
+              <p className="text-sm sm:text-base text-muted-foreground mb-4 sm:mb-6 px-4">
                 Find your perfect internship or manage your profile
               </p>
               <Button
                 size="lg"
-                className="bg-gradient-primary hover:bg-gradient-primary-hover text-primary-foreground font-semibold"
+                className="bg-gradient-primary hover:bg-gradient-primary-hover text-primary-foreground font-semibold text-sm sm:text-base px-6 py-5 sm:px-8 sm:py-6"
                 onClick={() => setShowInternshipForm(true)}
               >
-                <Briefcase className="mr-2 h-5 w-5" />
+                <Briefcase className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
                 Find My Internship
               </Button>
             </div>

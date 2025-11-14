@@ -108,22 +108,22 @@ const AdminLogin = () => {
       </div>
 
       {/* Back Button */}
-      <div className="absolute top-6 left-6">
-        <Button variant="outline" onClick={() => navigate("/")}>
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          Back to Home
+      <div className="absolute top-4 left-4 sm:top-6 sm:left-6">
+        <Button variant="outline" onClick={() => navigate("/")} className="text-xs sm:text-sm px-3 py-2">
+          <ArrowLeft className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4" />
+          <span className="hidden xs:inline">Back to </span>Home
         </Button>
       </div>
 
       {/* Admin Login Form */}
-      <div className="flex min-h-screen items-center justify-center px-4">
+      <div className="flex min-h-screen items-center justify-center px-4 py-20">
         <Card className="w-full max-w-md bg-card/80 backdrop-blur border-primary/20">
-          <CardHeader className="text-center">
-            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
-              <Shield className="h-8 w-8 text-primary" />
+          <CardHeader className="text-center px-4 sm:px-6">
+            <div className="mx-auto mb-3 sm:mb-4 flex h-14 w-14 sm:h-16 sm:w-16 items-center justify-center rounded-full bg-primary/10">
+              <Shield className="h-7 w-7 sm:h-8 sm:w-8 text-primary" />
             </div>
-            <CardTitle className="text-3xl">Admin Access</CardTitle>
-            <CardDescription>
+            <CardTitle className="text-2xl sm:text-3xl">Admin Access</CardTitle>
+            <CardDescription className="text-sm sm:text-base">
               Secure login for system administrators only
             </CardDescription>
           </CardHeader>

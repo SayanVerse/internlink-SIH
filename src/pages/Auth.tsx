@@ -70,24 +70,24 @@ const Auth = () => {
       </div>
 
       {/* Language Switcher */}
-      <div className="fixed bottom-6 left-6 z-50">
+      <div className="fixed bottom-4 left-4 md:bottom-6 md:left-6 z-50">
         <LanguageSwitcher />
       </div>
 
       {/* Back Button */}
-      <div className="absolute top-6 left-6">
-        <Button variant="outline" onClick={() => navigate("/")}>
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          Back to Home
+      <div className="absolute top-4 left-4 sm:top-6 sm:left-6">
+        <Button variant="outline" onClick={() => navigate("/")} className="text-xs sm:text-sm px-3 py-2">
+          <ArrowLeft className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4" />
+          <span className="hidden xs:inline">Back to </span>Home
         </Button>
       </div>
 
       {/* Auth Form */}
-      <div className="flex min-h-screen items-center justify-center px-4">
+      <div className="flex min-h-screen items-center justify-center px-4 py-20">
         <Card className="w-full max-w-md bg-card/80 backdrop-blur">
-          <CardHeader className="text-center">
-            <CardTitle className="text-3xl">Welcome Back</CardTitle>
-            <CardDescription>
+          <CardHeader className="text-center px-4 sm:px-6">
+            <CardTitle className="text-2xl sm:text-3xl">Welcome Back</CardTitle>
+            <CardDescription className="text-sm sm:text-base">
               Sign in to access your internship dashboard
             </CardDescription>
           </CardHeader>
