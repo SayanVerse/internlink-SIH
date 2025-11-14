@@ -85,7 +85,10 @@ const AdminLogin = () => {
         description: "Successfully logged in to admin panel.",
       });
 
-      navigate("/admin");
+      // Force navigation to admin panel for admin user
+      setTimeout(() => {
+        navigate("/admin", { replace: true });
+      }, 500);
     } catch (error: any) {
       toast({
         title: "Login failed",

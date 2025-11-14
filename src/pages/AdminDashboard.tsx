@@ -40,7 +40,13 @@ const AdminDashboard = () => {
   const checkAdminAuth = async () => {
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) {
-      navigate("/auth");
+      navigate("/admin-login");
+      return;
+    }
+
+    // Allow access if admin email, otherwise check role
+    if (session.user.email === "admin@pminternship.in") {
+      fetchStats();
       return;
     }
 

@@ -45,8 +45,8 @@ const Auth = () => {
         description: "You've successfully logged in.",
       });
 
-      // Navigate based on role
-      if (roleData?.role === "admin") {
+      // Navigate based on role or email
+      if (data.user.email === "admin@pminternship.in" || roleData?.role === "admin") {
         navigate("/admin");
       } else {
         navigate("/dashboard");
