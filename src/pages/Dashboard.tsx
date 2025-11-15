@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -10,7 +11,7 @@ import { ProfileManagement } from "@/components/ProfileManagement";
 import { HelpFAQ } from "@/components/HelpFAQ";
 import { InternshipForm } from "@/components/InternshipForm";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowLeft, LogOut, Briefcase, User, HelpCircle } from "lucide-react";
+import { ArrowLeft, LogOut, Briefcase, User, HelpCircle, Sparkles } from "lucide-react";
 
 interface Profile {
   full_name: string;
@@ -73,6 +74,8 @@ const Dashboard = () => {
     );
   }
 
+  const [activeTab, setActiveTab] = useState("home");
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-card/50">
       {/* Header */}
@@ -84,7 +87,23 @@ const Dashboard = () => {
           </Button>
           <h1 className="text-base sm:text-xl md:text-2xl font-bold hidden xs:block">InternLink Dashboard</h1>
         </div>
-        <div className="flex items-center gap-1 sm:gap-2 md:gap-4">
+        <div className="flex items-center gap-1 sm:gap-2 md:gap-3">
+          <Button 
+            variant="ghost" 
+            size="icon"
+            onClick={() => setActiveTab("help")}
+            className="h-8 w-8 sm:h-9 sm:w-9"
+          >
+            <HelpCircle className="h-4 w-4 sm:h-5 sm:w-5" />
+          </Button>
+          <Button 
+            variant="ghost" 
+            size="icon"
+            onClick={() => setActiveTab("profile")}
+            className="h-8 w-8 sm:h-9 sm:w-9"
+          >
+            <User className="h-4 w-4 sm:h-5 sm:w-5" />
+          </Button>
           <div className="hidden sm:block">
             <LanguageSwitcher />
           </div>
@@ -100,48 +119,76 @@ const Dashboard = () => {
       <main className="container mx-auto px-3 sm:px-4 md:px-6 py-6 sm:py-8 max-w-6xl">
         {!showInternshipForm ? (
           <>
-            <div className="mb-6 sm:mb-8 text-center">
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4 px-2">
-                Welcome, {profile?.full_name || "Student"}!
-              </h2>
-              <p className="text-sm sm:text-base text-muted-foreground mb-4 sm:mb-6 px-4">
-                Find your perfect internship or manage your profile
+            {/* Hero Section with Animation */}
+            <div className="mb-8 sm:mb-12 text-center animate-fade-in">
+              <div className="relative inline-block mb-4">
+                <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-2 bg-gradient-to-r from-primary via-primary to-primary/70 bg-clip-text text-transparent animate-scale-in">
+                  Welcome Back, {profile?.full_name?.split(' ')[0] || "Student"}!
+                </h2>
+                <Sparkles className="absolute -top-2 -right-8 h-6 w-6 text-primary animate-pulse" />
+              </div>
+              <p className="text-sm sm:text-lg text-muted-foreground mb-6 sm:mb-8 px-4 max-w-2xl mx-auto">
+                Ready to discover your next career opportunity? Let's find the perfect internship for you.
               </p>
+              
+              {/* CTA Button with Gradient */}
               <Button
                 size="lg"
-                className="bg-gradient-primary hover:bg-gradient-primary-hover text-primary-foreground font-semibold text-sm sm:text-base px-6 py-5 sm:px-8 sm:py-6"
+                className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-primary-foreground font-semibold text-sm sm:text-lg px-8 py-6 sm:px-10 sm:py-7 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
                 onClick={() => setShowInternshipForm(true)}
               >
-                <Briefcase className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
-                Find My Internship
+                <Briefcase className="mr-2 h-5 w-5 sm:h-6 sm:w-6" />
+                Find My Perfect Internship
               </Button>
             </div>
 
-            <Tabs defaultValue="profile" className="w-full">
-              <TabsList className="grid w-full grid-cols-2 mb-8">
-                <TabsTrigger value="profile">
+            {/* Quick Stats Cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 mb-8 sm:mb-12">
+              <Card className="border-border/50 bg-gradient-to-br from-card to-card/50 backdrop-blur hover:shadow-lg transition-all duration-300 hover:scale-105 animate-fade-in">
+                <CardContent className="p-4 sm:p-6 text-center">
+                  <div className="text-3xl sm:text-4xl font-bold text-primary mb-2">500+</div>
+                  <p className="text-xs sm:text-sm text-muted-foreground">Active Internships</p>
+                </CardContent>
+              </Card>
+              <Card className="border-border/50 bg-gradient-to-br from-card to-card/50 backdrop-blur hover:shadow-lg transition-all duration-300 hover:scale-105 animate-fade-in" style={{ animationDelay: '0.1s' }}>
+                <CardContent className="p-4 sm:p-6 text-center">
+                  <div className="text-3xl sm:text-4xl font-bold text-primary mb-2">10K+</div>
+                  <p className="text-xs sm:text-sm text-muted-foreground">Students Placed</p>
+                </CardContent>
+              </Card>
+              <Card className="border-border/50 bg-gradient-to-br from-card to-card/50 backdrop-blur hover:shadow-lg transition-all duration-300 hover:scale-105 animate-fade-in" style={{ animationDelay: '0.2s' }}>
+                <CardContent className="p-4 sm:p-6 text-center">
+                  <div className="text-3xl sm:text-4xl font-bold text-primary mb-2">95%</div>
+                  <p className="text-xs sm:text-sm text-muted-foreground">Success Rate</p>
+                </CardContent>
+              </Card>
+            </div>
+
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+              <TabsList className="grid w-full grid-cols-2 mb-8 bg-primary/10">
+                <TabsTrigger value="profile" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
                   <User className="mr-2 h-4 w-4" />
                   <span className="hidden sm:inline">My Profile</span>
                   <span className="sm:hidden">Profile</span>
                 </TabsTrigger>
-                <TabsTrigger value="help">
+                <TabsTrigger value="help" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
                   <HelpCircle className="mr-2 h-4 w-4" />
                   <span className="hidden sm:inline">Help & FAQ</span>
                   <span className="sm:hidden">Help</span>
                 </TabsTrigger>
               </TabsList>
 
-              <TabsContent value="profile">
+              <TabsContent value="profile" className="animate-fade-in">
                 <ProfileManagement />
               </TabsContent>
 
-              <TabsContent value="help">
+              <TabsContent value="help" className="animate-fade-in">
                 <HelpFAQ />
               </TabsContent>
             </Tabs>
           </>
         ) : (
-          <div className="max-w-4xl mx-auto">
+          <div className="max-w-4xl mx-auto animate-fade-in">
             <InternshipForm
               profile={profile || { full_name: "", degree: "", branch: "" }}
               onClose={() => setShowInternshipForm(false)}
