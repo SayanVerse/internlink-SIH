@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 interface Message {
   role: "user" | "bot";
@@ -29,41 +30,23 @@ export const Chatbot = () => {
     setLoading(true);
 
     try {
-      const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=AIzaSyB5axjuDzYXwnGVTklrs_w9FWxAg512QIA`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            contents: [{
-              parts: [{
-                text: `You are InternLink Bot, a helpful assistant for the PM Internship Scheme platform. 
-                
-Context: This platform helps students find internships through AI-powered recommendations.
+      const { data, error } = await supabase.functions.invoke("chat-bot", {
+        body: { message: userMessage }
+      });
 
-FAQs:
-- How to find internships: Click "Find My Internship" and fill out your preferences
-- Eligibility: Students from 10+2 to PG levels can apply
-- Application process: Browse recommendations and apply through provided links
-- Profile management: Edit your profile from the dashboard
-- Support: Contact 9609800163 / 9477494999 or email sayan.official.2024@gmail.com
+      if (error) throw error;
 
-User question: ${userMessage}`
-              }]
-            }]
-          })
-        }
-      );
+      if (data?.error) {
+        throw new Error(data.error);
+      }
 
-      const data = await response.json();
-      const botResponse = data.candidates?.[0]?.content?.parts?.[0]?.text || 
-        "I'm sorry, I couldn't process that. Please try again.";
-
+      const botResponse = data?.response || "I'm sorry, I couldn't process that. Please try again.";
       setMessages(prev => [...prev, { role: "bot", content: botResponse }]);
-    } catch (error) {
+    } catch (error: any) {
+      console.error("Chatbot error:", error);
       toast({
         title: "Error",
-        description: "Failed to get response. Please try again.",
+        description: error.message || "Failed to get response. Please try again.",
         variant: "destructive"
       });
     } finally {
@@ -84,7 +67,7 @@ User question: ${userMessage}`
 
       {/* Chat Window */}
       {isOpen && (
-        <Card className="fixed bottom-24 right-6 z-50 w-96 h-[500px] flex flex-col shadow-2xl">
+        <Card className="fixed bottom-20 sm:bottom-24 right-2 sm:right-6 z-50 w-[calc(100vw-1rem)] sm:w-96 max-w-md h-[500px] flex flex-col shadow-2xl">
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b bg-gradient-primary text-primary-foreground">
             <div className="flex items-center gap-2">

@@ -17,7 +17,7 @@ interface Profile {
   full_name: string;
   degree: string;
   branch: string;
-  college_name: string;
+  college_name?: string;
 }
 
 const Dashboard = () => {
@@ -27,6 +27,7 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [showInternshipForm, setShowInternshipForm] = useState(false);
+  const [activeTab, setActiveTab] = useState("profile");
 
   useEffect(() => {
     checkAuth();
@@ -73,8 +74,6 @@ const Dashboard = () => {
       </div>
     );
   }
-
-  const [activeTab, setActiveTab] = useState("home");
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-card/50">
