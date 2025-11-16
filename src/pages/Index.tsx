@@ -223,7 +223,13 @@ const Index = () => {
       <footer className="px-4 sm:px-6 py-6 sm:py-8 border-t border-border/50 bg-card/20">
         <div className="max-w-6xl mx-auto text-center">
           <p className="text-xs sm:text-sm text-muted-foreground">
-            Developed by <span className="font-semibold text-foreground">Team Tech Bridge</span>
+            Developed by{" "}
+            <button
+              onClick={() => navigate("/team")}
+              className="font-semibold text-foreground hover:text-primary transition-colors underline cursor-pointer"
+            >
+              Team Tech Bridge
+            </button>
           </p>
           <p className="text-xs sm:text-sm text-muted-foreground mt-1">
             Smart India Hackathon 2025

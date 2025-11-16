@@ -93,8 +93,23 @@ All colors MUST be HSL.
   /* Hide Google Translate banner and branding */
   .goog-te-banner-frame,
   .goog-te-balloon-frame,
-  .goog-logo-link {
+  .goog-logo-link,
+  #goog-gt-tt,
+  .goog-te-spinner-pos,
+  .skiptranslate iframe,
+  .goog-te-menu-frame,
+  .goog-te-ftab,
+  div#goog-gt-,
+  .goog-te-gadget-simple,
+  .goog-te-menu-value span:first-child,
+  .VIpgJd-ZVi9od-aZ2wEe-wOHMyf,
+  .VIpgJd-ZVi9od-aZ2wEe-OiiCO,
+  .goog-te-menu2,
+  .goog-te-menu-frame.skiptranslate {
     display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
   }
   
   body {
@@ -111,5 +126,12 @@ All colors MUST be HSL.
   
   .goog-te-gadget span {
     display: none !important;
+  }
+  
+  /* Hide iframe that contains translate selector */
+  iframe.skiptranslate {
+    display: none !important;
+    position: absolute !important;
+    top: -9999px !important;
   }
 }
