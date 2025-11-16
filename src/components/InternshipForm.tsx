@@ -77,6 +77,7 @@ export const InternshipForm = ({ profile, onClose }: InternshipFormProps) => {
     fullName: profile.full_name || "",
     education: "",
     interests: [] as string[],
+    customInterest: "",
     stream: profile.branch || "",
     year: new Date().getFullYear().toString(),
     skills: [] as string[],
@@ -84,6 +85,7 @@ export const InternshipForm = ({ profile, onClose }: InternshipFormProps) => {
     sectors: [] as string[],
     pinCode: "",
     preferredLocations: [] as string[],
+    customLocation: "",
     isRural: false
   });
 
@@ -101,16 +103,21 @@ export const InternshipForm = ({ profile, onClose }: InternshipFormProps) => {
         allSkills.push(...formData.customSkills.split(',').map(s => s.trim()));
       }
 
-      // Simple rule-based matching
+      const allInterests = [...formData.interests];
+      if (formData.customInterest.trim()) {
+        allInterests.push(formData.customInterest.trim());
+      }
+
+      const allLocations = [...formData.preferredLocations];
+      if (formData.customLocation.trim()) {
+        allLocations.push(formData.customLocation.trim());
+      }
+
+      // Fetch ALL active internships
       let query = supabase
         .from("internships")
         .select("*")
-        .eq("active", true)
-        .limit(5);
-
-      if (formData.sectors.length > 0) {
-        query = query.in("sector", formData.sectors);
-      }
+        .eq("active", true);
 
       const { data: internships, error } = await query;
       
@@ -120,27 +127,57 @@ export const InternshipForm = ({ profile, onClose }: InternshipFormProps) => {
       const scored = (internships || []).map(internship => {
         let score = 0;
         
-        // Sector match
-        if (formData.sectors.includes(internship.sector)) score += 10;
+        // Sector match (high priority)
+        if (formData.sectors.length > 0 && formData.sectors.includes(internship.sector)) {
+          score += 20;
+        }
         
-        // Skills match
+        // Skills match (highest priority)
         const matchedSkills = internship.required_skills?.filter((skill: string) =>
-          allSkills.some(userSkill => userSkill.toLowerCase().includes(skill.toLowerCase()))
+          allSkills.some(userSkill => 
+            userSkill.toLowerCase().includes(skill.toLowerCase()) ||
+            skill.toLowerCase().includes(userSkill.toLowerCase())
+          )
         ) || [];
-        score += matchedSkills.length * 5;
+        score += matchedSkills.length * 10;
         
-        // Location match
-        if (formData.preferredLocations.length > 0) {
-          if (internship.remote || formData.preferredLocations.includes(internship.city || "")) {
-            score += 5;
+        // Location match (medium priority)
+        if (allLocations.length > 0) {
+          if (allLocations.includes("Remote") && internship.remote) {
+            score += 15;
           }
+          if (internship.city && allLocations.some(loc => 
+            loc.toLowerCase() === internship.city?.toLowerCase()
+          )) {
+            score += 15;
+          }
+        }
+
+        // Education match
+        if (internship.min_education && formData.education) {
+          score += 5;
         }
         
         return { ...internship, score, matchedSkills };
       });
 
+      // Sort and take top matches
       scored.sort((a, b) => b.score - a.score);
-      setRecommendations(scored.slice(0, 5) as any);
+      
+      // Take top 5, but if we have results, show them
+      const topRecommendations = scored.slice(0, 5);
+      
+      // If no high-scoring matches, show some random active internships
+      if (topRecommendations.every(r => r.score === 0) && internships && internships.length > 0) {
+        const randomInternships = internships
+          .sort(() => Math.random() - 0.5)
+          .slice(0, 5)
+          .map(i => ({ ...i, score: 0, matchedSkills: [] }));
+        setRecommendations(randomInternships as any);
+      } else {
+        setRecommendations(topRecommendations as any);
+      }
+      
       setStep(5);
     } catch (error: any) {
       toast({
@@ -217,7 +254,7 @@ export const InternshipForm = ({ profile, onClose }: InternshipFormProps) => {
         {step === 2 && (
           <div className="space-y-4">
             <div>
-              <Label>Interests (Select Multiple)</Label>
+              <Label>Interests (Select Multiple or Add Custom)</Label>
               <div className="flex flex-wrap gap-2 mt-2">
                 {INTERESTS.map(interest => (
                   <Badge
@@ -233,6 +270,12 @@ export const InternshipForm = ({ profile, onClose }: InternshipFormProps) => {
                   </Badge>
                 ))}
               </div>
+              <Input
+                className="mt-2"
+                placeholder="Add custom interest"
+                value={formData.customInterest}
+                onChange={(e) => setFormData({ ...formData, customInterest: e.target.value })}
+              />
             </div>
             <div>
               <Label>Stream (Field of Study)</Label>
@@ -307,8 +350,18 @@ export const InternshipForm = ({ profile, onClose }: InternshipFormProps) => {
               />
             </div>
             <div>
-              <Label>Preferred Work Locations</Label>
+              <Label>Preferred Work Locations (Select or Add Custom)</Label>
               <div className="flex flex-wrap gap-2 mt-2">
+                <Badge
+                  variant={formData.preferredLocations.includes("Remote") ? "default" : "outline"}
+                  className="cursor-pointer"
+                  onClick={() => setFormData({
+                    ...formData,
+                    preferredLocations: toggleArrayItem(formData.preferredLocations, "Remote")
+                  })}
+                >
+                  Remote
+                </Badge>
                 {POPULAR_CITIES.map(city => (
                   <Badge
                     key={city}
@@ -323,6 +376,12 @@ export const InternshipForm = ({ profile, onClose }: InternshipFormProps) => {
                   </Badge>
                 ))}
               </div>
+              <Input
+                className="mt-2"
+                placeholder="Add custom location"
+                value={formData.customLocation}
+                onChange={(e) => setFormData({ ...formData, customLocation: e.target.value })}
+              />
             </div>
             <div className="flex items-center space-x-2">
               <Checkbox
