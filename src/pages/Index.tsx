@@ -1,14 +1,33 @@
 import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { Chatbot } from "@/components/Chatbot";
 import { supabase } from "@/integrations/supabase/client";
-import { ArrowRight, Briefcase, Users, Building2, TrendingUp, Target, Zap, Shield, User } from "lucide-react";
+import { ArrowRight, Briefcase, Users, Building2, TrendingUp, Target, Zap, Shield, User, Menu, X, HelpCircle, LogOut } from "lucide-react";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 const Index = () => {
   const navigate = useNavigate();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  useEffect(() => {
+    checkAuth();
+  }, []);
+
+  const checkAuth = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    setIsLoggedIn(!!session);
+  };
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    setIsLoggedIn(false);
+    setMenuOpen(false);
+  };
 
   const stats = [
     { value: "500+", label: "Active Internships", icon: Briefcase },
@@ -27,31 +46,66 @@ const Index = () => {
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between p-3 sm:p-4 md:p-6 bg-background/80 backdrop-blur-sm border-b border-border/50">
         <div className="flex items-center gap-2 sm:gap-4">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={async () => {
-              const { data: { session } } = await supabase.auth.getSession();
-              if (session) {
-                navigate("/dashboard");
-              } else {
-                navigate("/auth");
-              }
-            }}
-            className="rounded-full h-9 w-9 sm:h-10 sm:w-10"
-          >
-            <User className="h-4 w-4 sm:h-5 sm:w-5" />
-          </Button>
+          <h2 className="text-lg sm:text-xl font-bold">InternLink</h2>
         </div>
         <div className="flex items-center gap-2 sm:gap-4">
           <ThemeToggle />
-          <Button
-            variant="outline"
-            onClick={() => navigate("/auth")}
-            className="font-semibold text-xs sm:text-sm px-3 py-2 sm:px-4"
-          >
-            <span className="hidden xs:inline">Student </span>Login
-          </Button>
+          {!isLoggedIn && (
+            <Button
+              variant="outline"
+              onClick={() => navigate("/auth")}
+              className="font-semibold text-xs sm:text-sm px-3 py-2 sm:px-4"
+            >
+              <span className="hidden xs:inline">Student </span>Login
+            </Button>
+          )}
+          <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
+            <SheetTrigger asChild>
+              <Button variant="ghost" size="icon" className="h-9 w-9 sm:h-10 sm:w-10">
+                <Menu className="h-5 w-5" />
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="right" className="w-64">
+              <div className="flex flex-col gap-4 mt-8">
+                <Button
+                  variant="ghost"
+                  className="justify-start"
+                  onClick={() => {
+                    navigate(isLoggedIn ? "/dashboard" : "/auth");
+                    setMenuOpen(false);
+                  }}
+                >
+                  <User className="mr-2 h-4 w-4" />
+                  {isLoggedIn ? "My Profile" : "Login"}
+                </Button>
+                <Button
+                  variant="ghost"
+                  className="justify-start"
+                  onClick={() => {
+                    if (isLoggedIn) {
+                      navigate("/dashboard");
+                    } else {
+                      navigate("/auth");
+                    }
+                    setMenuOpen(false);
+                  }}
+                >
+                  <HelpCircle className="mr-2 h-4 w-4" />
+                  Help & FAQ
+                </Button>
+                {isLoggedIn && (
+                  <Button
+                    variant="ghost"
+                    className="justify-start text-destructive"
+                    onClick={handleLogout}
+                  >
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Logout
+                  </Button>
+                )}
+              </div>
+            </SheetContent>
+          </Sheet>
         </div>
       </header>
 

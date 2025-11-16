@@ -30,8 +30,14 @@ export const Chatbot = () => {
     setLoading(true);
 
     try {
+      // Get user session for authentication
+      const { data: { session } } = await supabase.auth.getSession();
+      
       const { data, error } = await supabase.functions.invoke("chat-bot", {
-        body: { message: userMessage }
+        body: { message: userMessage },
+        headers: session ? {
+          Authorization: `Bearer ${session.access_token}`
+        } : {}
       });
 
       if (error) throw error;
