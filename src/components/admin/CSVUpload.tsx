@@ -165,13 +165,27 @@ DevOps Engineer Intern,IT,CloudOps Pro,Automate deployment pipelines and infrast
         throw new Error("No valid internships found in CSV");
       }
 
-      const { error } = await supabase.from("internships").insert(internships);
+      // Remove duplicates based on title + org_name combination
+      const uniqueInternships = internships.reduce((acc: any[], current: any) => {
+        const duplicate = acc.find(
+          item => item.title.toLowerCase() === current.title.toLowerCase() && 
+                  item.org_name.toLowerCase() === current.org_name.toLowerCase()
+        );
+        if (!duplicate) {
+          acc.push(current);
+        }
+        return acc;
+      }, []);
+
+      const duplicatesRemoved = internships.length - uniqueInternships.length;
+
+      const { error } = await supabase.from("internships").insert(uniqueInternships);
 
       if (error) throw error;
 
       toast({
         title: "Upload successful",
-        description: `${internships.length} internships have been added.`,
+        description: `${uniqueInternships.length} internships added${duplicatesRemoved > 0 ? `, ${duplicatesRemoved} duplicates removed` : ''}.`,
       });
 
       setFile(null);

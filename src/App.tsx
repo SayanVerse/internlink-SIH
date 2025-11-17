@@ -10,6 +10,9 @@ import Dashboard from "./pages/Dashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminLogin from "./pages/AdminLogin";
 import Team from "./pages/Team";
+import Profile from "./pages/Profile";
+import HelpFAQPage from "./pages/HelpFAQ";
+import MyInternships from "./pages/MyInternships";
 import NotFound from "./pages/NotFound";
 import { Chatbot } from "@/components/Chatbot";
 
@@ -26,6 +29,9 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/help-faq" element={<HelpFAQPage />} />
+            <Route path="/my-internships" element={<MyInternships />} />
             <Route path="/admin-login" element={<AdminLogin />} />
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/team" element={<Team />} />

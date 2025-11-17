@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Briefcase, Users, UserPlus, TrendingUp, Plus, Upload, UserCog } from "lucide-react";
+import { RecentApplications } from "./RecentApplications";
 
 interface AdminOverviewProps {
   stats: {
@@ -108,22 +109,7 @@ export function AdminOverview({ stats, lastUpdate, loading }: AdminOverviewProps
             <CardTitle>Recent Activity</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
-            <div className="flex items-center gap-3 text-sm">
-              <UserPlus className="h-4 w-4 text-green-500" />
-              <span>{stats.totalUsers} registered users</span>
-            </div>
-            <div className="flex items-center gap-3 text-sm">
-              <Users className="h-4 w-4 text-primary" />
-              <span>{stats.internUsers} intern users</span>
-            </div>
-            <div className="flex items-center gap-3 text-sm">
-              <Briefcase className="h-4 w-4 text-blue-500" />
-              <span>{stats.activeInternships} active internships</span>
-            </div>
-            <div className="flex items-center gap-3 text-sm">
-              <TrendingUp className="h-4 w-4 text-orange-500" />
-              <span>{stats.totalInternships} total opportunities</span>
-            </div>
+            <RecentApplications />
           </CardContent>
         </Card>
       </div>

@@ -6,7 +6,8 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
-import { ChevronLeft, ChevronRight, Loader2, ExternalLink } from "lucide-react";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { ChevronLeft, ChevronRight, Loader2, ExternalLink, Info } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
@@ -401,7 +402,7 @@ export const InternshipForm = ({ profile, onClose }: InternshipFormProps) => {
             ) : (
               recommendations.map((rec: any) => (
                 <Card key={rec.id} className="p-4">
-                  <div className="space-y-2">
+                  <div className="space-y-3">
                     <h4 className="font-semibold text-lg">{rec.title}</h4>
                     <p className="text-sm text-muted-foreground">{rec.org_name}</p>
                     <p className="text-sm">{rec.description}</p>
@@ -410,6 +411,34 @@ export const InternshipForm = ({ profile, onClose }: InternshipFormProps) => {
                         <Badge key={skill} variant="secondary">{skill}</Badge>
                       ))}
                     </div>
+                    
+                    {/* Why Recommended Section */}
+                    <Collapsible>
+                      <CollapsibleTrigger className="flex items-center gap-2 text-sm font-medium text-primary hover:underline">
+                        <Info className="h-4 w-4" />
+                        Why this internship was recommended to you
+                      </CollapsibleTrigger>
+                      <CollapsibleContent className="mt-2 p-3 bg-muted/50 rounded-md">
+                        <ul className="list-disc list-inside space-y-1 text-sm">
+                          {rec.matchedSkills?.length > 0 && (
+                            <li>Matches {rec.matchedSkills.length} of your skills: {rec.matchedSkills.join(", ")}</li>
+                          )}
+                          {rec.matchedInterests?.length > 0 && (
+                            <li>Aligns with your interests in {rec.matchedInterests.join(", ")}</li>
+                          )}
+                          {rec.matchedSectors?.length > 0 && (
+                            <li>Fits your preferred sectors: {rec.matchedSectors.join(", ")}</li>
+                          )}
+                          {rec.locationMatch && (
+                            <li>Located in your preferred location</li>
+                          )}
+                          {rec.score && (
+                            <li>Overall match score: {Math.round(rec.score * 100)}%</li>
+                          )}
+                        </ul>
+                      </CollapsibleContent>
+                    </Collapsible>
+
                     <div className="flex items-center justify-between pt-2">
                       <div className="text-sm text-muted-foreground">
                         {rec.city && `${rec.city}, ${rec.state}`}

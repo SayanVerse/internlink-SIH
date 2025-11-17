@@ -6,21 +6,51 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { Chatbot } from "@/components/Chatbot";
 import { supabase } from "@/integrations/supabase/client";
-import { ArrowRight, Briefcase, Users, Building2, TrendingUp, Target, Zap, Shield, User, Menu, X, HelpCircle, LogOut } from "lucide-react";
+import { ArrowRight, Briefcase, Users, Building2, TrendingUp, Target, Zap, Shield, User, Menu, HelpCircle, LogOut } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 const Index = () => {
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [userName, setUserName] = useState("");
+  const [typewriterText, setTypewriterText] = useState("");
 
   useEffect(() => {
     checkAuth();
   }, []);
 
+  useEffect(() => {
+    if (userName) {
+      const text = isLoggedIn ? `Welcome Back, ${userName}` : `Hello, ${userName}, welcome to`;
+      let index = 0;
+      const interval = setInterval(() => {
+        if (index <= text.length) {
+          setTypewriterText(text.slice(0, index));
+          index++;
+        } else {
+          clearInterval(interval);
+        }
+      }, 50);
+      return () => clearInterval(interval);
+    }
+  }, [userName, isLoggedIn]);
+
   const checkAuth = async () => {
     const { data: { session } } = await supabase.auth.getSession();
     setIsLoggedIn(!!session);
+    
+    if (session) {
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("full_name")
+        .eq("id", session.user.id)
+        .single();
+      
+      if (profile) {
+        setUserName(profile.full_name.split(' ')[0]);
+      }
+    }
   };
 
   const handleLogout = async () => {
@@ -67,26 +97,49 @@ const Index = () => {
             </SheetTrigger>
             <SheetContent side="right" className="w-64">
               <div className="flex flex-col gap-4 mt-8">
-                <Button
-                  variant="ghost"
-                  className="justify-start"
-                  onClick={() => {
-                    navigate(isLoggedIn ? "/dashboard" : "/auth");
-                    setMenuOpen(false);
-                  }}
-                >
-                  <User className="mr-2 h-4 w-4" />
-                  {isLoggedIn ? "My Profile" : "Login"}
-                </Button>
-                <Button
-                  variant="ghost"
-                  className="justify-start"
-                  onClick={() => {
-                    if (isLoggedIn) {
-                      navigate("/dashboard");
-                    } else {
+                {!isLoggedIn ? (
+                  <Button
+                    variant="ghost"
+                    className="justify-start"
+                    onClick={() => {
                       navigate("/auth");
-                    }
+                      setMenuOpen(false);
+                    }}
+                  >
+                    <User className="mr-2 h-4 w-4" />
+                    Login
+                  </Button>
+                ) : (
+                  <>
+                    <Button
+                      variant="ghost"
+                      className="justify-start"
+                      onClick={() => {
+                        navigate("/profile");
+                        setMenuOpen(false);
+                      }}
+                    >
+                      <User className="mr-2 h-4 w-4" />
+                      My Profile
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      className="justify-start"
+                      onClick={() => {
+                        navigate("/my-internships");
+                        setMenuOpen(false);
+                      }}
+                    >
+                      <Briefcase className="mr-2 h-4 w-4" />
+                      My Internships
+                    </Button>
+                  </>
+                )}
+                <Button
+                  variant="ghost"
+                  className="justify-start"
+                  onClick={() => {
+                    navigate("/help-faq");
                     setMenuOpen(false);
                   }}
                 >
@@ -111,6 +164,11 @@ const Index = () => {
 
       {/* Hero Section */}
       <section className="flex min-h-screen flex-col items-center justify-center px-4 sm:px-6 md:px-8 text-center pt-20 pb-12">
+        {typewriterText && (
+          <p className="mb-4 text-lg sm:text-xl md:text-2xl text-primary font-semibold">
+            {typewriterText}
+          </p>
+        )}
         <h1 className="mb-6 sm:mb-8 text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold tracking-tight">
           Intern Link
         </h1>
