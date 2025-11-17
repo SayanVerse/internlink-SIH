@@ -90,41 +90,28 @@ All colors MUST be HSL.
     font-family: 'Baloo Bhai 2', cursive;
   }
   
-/* Style Google Translate to be minimal and functional */
+/* Hide Google Translate widget completely */
 .goog-te-banner-frame {
   display: none !important;
 }
 
 #google_translate_element {
-  position: fixed;
-  bottom: 80px;
-  left: 16px;
-  z-index: 40;
-  background: hsl(var(--card));
-  border: 1px solid hsl(var(--border));
-  border-radius: 8px;
-  padding: 8px;
-  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+  position: fixed !important;
+  bottom: -9999px !important;
+  left: -9999px !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  z-index: -1 !important;
 }
 
-#google_translate_element .goog-te-gadget {
-  font-family: inherit !important;
-  color: hsl(var(--foreground)) !important;
-}
-
-#google_translate_element .goog-te-gadget-simple {
-  background: transparent !important;
-  border: none !important;
-  padding: 0 !important;
-  font-size: 12px !important;
-}
-
-#google_translate_element .goog-te-menu-value {
-  color: hsl(var(--foreground)) !important;
-}
-
-#google_translate_element .goog-te-gadget-icon {
+.goog-te-gadget,
+.goog-te-combo,
+#goog-gt-tt,
+.goog-te-balloon-frame,
+.goog-te-menu-frame {
   display: none !important;
+  visibility: hidden !important;
 }
 
 body {

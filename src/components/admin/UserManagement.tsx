@@ -110,19 +110,21 @@ export function UserManagement() {
     }
 
     try {
-      // First, delete from auth.users using the Supabase admin API
-      const { error: authError } = await supabase.auth.admin.deleteUser(userId);
+      // Call the edge function to delete user
+      const { data: { session } } = await supabase.auth.getSession();
       
-      if (authError) {
-        // If admin API isn't available, try deleting profile directly
-        // The database cascade will handle related records
-        const { error: profileError } = await supabase
-          .from("profiles")
-          .delete()
-          .eq("id", userId);
-
-        if (profileError) throw profileError;
+      if (!session) {
+        throw new Error("Not authenticated");
       }
+
+      const { data, error } = await supabase.functions.invoke('delete-user', {
+        body: { userId },
+        headers: {
+          Authorization: `Bearer ${session.access_token}`
+        }
+      });
+
+      if (error) throw error;
 
       toast({
         title: "User deleted",
