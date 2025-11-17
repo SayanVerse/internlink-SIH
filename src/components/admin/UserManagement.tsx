@@ -105,18 +105,24 @@ export function UserManagement() {
   };
 
   const handleDeleteUser = async (userId: string, userName: string) => {
-    if (!confirm(`Are you sure you want to delete ${userName}? This will also delete all their applications.`)) {
+    if (!confirm(`Are you sure you want to delete ${userName}? This will also delete all their applications and auth account.`)) {
       return;
     }
 
     try {
-      // Delete user profile (applications will be cascade deleted)
-      const { error } = await supabase
-        .from("profiles")
-        .delete()
-        .eq("id", userId);
+      // First, delete from auth.users using the Supabase admin API
+      const { error: authError } = await supabase.auth.admin.deleteUser(userId);
+      
+      if (authError) {
+        // If admin API isn't available, try deleting profile directly
+        // The database cascade will handle related records
+        const { error: profileError } = await supabase
+          .from("profiles")
+          .delete()
+          .eq("id", userId);
 
-      if (error) throw error;
+        if (profileError) throw profileError;
+      }
 
       toast({
         title: "User deleted",

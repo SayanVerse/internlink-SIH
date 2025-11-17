@@ -68,8 +68,8 @@ export function LanguageSwitcher() {
 
   return (
     <>
-      {/* Hidden Google Translate element */}
-      <div id="google_translate_element" style={{ display: "none" }} />
+      {/* Google Translate element - visible for translation to work */}
+      <div id="google_translate_element" />
       
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
